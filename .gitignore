@@ -1,0 +1,12 @@
+__pycache__/
+.ipynb_checkpoints/
+.venv/
+venv/
+/data/
+/input_data/
+/mu_dictionaries/
+/outputs/
+/figures/
+*.mat
+*.npz
+.DS_Store
