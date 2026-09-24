@@ -49,8 +49,7 @@ Input requirements and a directory/CSV example are included in Module 1:
 6. Compare correct and incorrect task correspondences using one global CCA per pooled comparison.
 7. Finish inline or optionally export summary tables and figures.
 
-There is no downsampling or phase interpolation before PCA. Task-specific native-length cropping precedes
-stacking. The dictionary places tracked appearances in the same MU column before PCA; missing memberships
+The dictionary places tracked appearances in the same MU column before PCA; missing memberships
 are zero-filled. PCA retains at least three dimensions for alignment, while the PCA90 table reports the
 minimum dimension explaining at least 90% variance.
 
