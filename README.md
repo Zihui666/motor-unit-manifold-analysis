@@ -1,63 +1,46 @@
 # Motor-unit manifold analysis
 
-Two self-contained Jupyter notebooks for tracked-MU PCA90, global CCA alignment and whole-space controls.
-All instructions, plots and tables are in English.
+Jupyter notebooks for tracked motor-unit PCA90, global canonical correlation analysis (CCA), and visual alignment controls.
 
-| File | Purpose |
+| Notebook | Function |
 | --- | --- |
-| [PCA90_Alignment_Controls.ipynb](PCA90_Alignment_Controls.ipynb) | Run the analysis on your own recordings. All code and input requirements are inside the notebook. Paths and outputs are blank. |
-| [PCA90_Alignment_Controls_Example.ipynb](PCA90_Alignment_Controls_Example.ipynb) | View a completed run on real recordings, including PCA90/CCA tables and six comparison figures. The original inputs are not included. |
-| `requirements.txt` | Python dependencies |
-| `.gitignore` | Excludes common local data and output files |
+| [PCA90_Alignment_Controls.ipynb](PCA90_Alignment_Controls.ipynb) | Run preprocessing, PCA, alignment and controls on your recordings. |
+| [PCA90_Alignment_Controls_Example.ipynb](PCA90_Alignment_Controls_Example.ipynb) | View a completed real-data analysis with PCA90 and CCA tables and six comparison figures. |
 
-## View the real-data example
-
-Open the example notebook to view its saved tables and images. These results were computed from real
-recordings; they are not synthetic. Only aggregate result tables and raster plots are embedded.
-The example contains no raw EMG, individual MU discharge events or traces, tracking dictionary entries,
-activity matrices, latent-coordinate arrays, or fitted model arrays. Dataset labels are generic and all paths are blank.
-
-Viewing requires no inputs. Rerunning requires your own compatible inputs; the private configuration and
-original recordings used to produce the displayed results are not distributed.
-
-## Run on your data
+## Getting started
 
 ```sh
 python -m pip install -r requirements.txt
 python -m jupyterlab PCA90_Alignment_Controls.ipynb
 ```
 
-In Module 1, fill in `DATA_ROOT` and `DICTIONARY_ROOT`, then set `SUBJECTS`, `ANGLES`, `SOURCE` and
-`TARGET`. The supplied `sub1` and `sub2` values are placeholders. Both notebooks contain all required
-Python functions; no separate helper script is needed. Python 3.13 was used for the verified run.
+In Module 1, enter `DATA_ROOT` and `DICTIONARY_ROOT`, then configure `SUBJECTS`, `ANGLES`, `SOURCE` and `TARGET`. Run the cells from top to bottom. Both notebooks contain all required analysis functions.
 
-Input requirements and a directory/CSV example are included in Module 1:
+## Inputs
 
-- Edited MATLAB v7.3/HDF5 recordings containing `signal.fs` or `signal.fsamp`, `edition.Pulsetrainclean{1}`
-  and `edition.Distimeclean{1}`. Discharge events must be one-based sample indices. The first grid is used.
-- One existing tracking dictionary per subject, location and angle, with `unique_mu`, `task`, and
-  `mu_index0`. `mu_index0` is the zero-based row in the edited recording. Tracking must be supplied;
-  the notebook does not infer MU matches.
+- **Edited recordings:** MATLAB v7.3/HDF5 files containing `signal.fs` or `signal.fsamp`, `edition.Pulsetrainclean{1}` and `edition.Distimeclean{1}`. Discharge events use one-based sample indices. The reader uses the first grid.
+- **MU tracking dictionaries:** one CSV per subject, location and angle, containing `unique_mu`, `task` and `mu_index0`. The index is the zero-based MU row in the edited recording.
 
-## Modules and outputs
+Module 1 includes the directory layout, filename pattern and dictionary format.
 
-1. Configure inputs and the comparison.
-2. Preprocess discharge events, assemble shared MU identities, and calculate the PCA90 table.
-3. Define task colors and source/target trajectory conventions.
-4. Compare the pooled latent spaces before and after global CCA, with canonical correlation tables.
-5. Compare observed and temporal-block-shuffled activity in 2D/3D.
-6. Compare correct and incorrect task correspondences using one global CCA per pooled comparison.
-7. Finish inline or optionally export summary tables and figures.
+## Modules
 
-The dictionary places tracked appearances in the same MU column before PCA; missing memberships
-are zero-filled. PCA retains at least three dimensions for alignment, while the PCA90 table reports the
-minimum dimension explaining at least 90% variance.
+| Module | Function |
+| --- | --- |
+| 1. Configuration | Select inputs, conditions and the source–target comparison. |
+| 2. Preprocessing and PCA | Smooth discharge activity, filter and normalize signals, assemble shared MU columns, and calculate PCA90. |
+| 3. Plotting conventions | Assign task colors and source/target line styles. |
+| 4. Global CCA | Align the pooled latent spaces and display before/after trajectories and canonical correlations. |
+| 5. Temporal-block control | Shuffle time blocks within tasks, refit PCA and CCA, and compare the results. |
+| 6. Task-correspondence control | Compare correct and incorrect task pairings using one global CCA per pooled comparison. |
+| 7. Results | Display tables and figures, with optional PNG/CSV export. |
 
-The wrong-task control keeps the pooled PCA spaces fixed, fits each correspondence on the same matched-length
-sample sets across all three tasks, and projects the full original trajectories. Plot colors retain true task
-identity. High canonical correlation under an incorrect pairing does not establish correct task alignment.
-Reported correlations describe the fitted data, not held-out generalization.
+## Analysis outputs
 
-`SAVE_OUTPUTS = False` keeps results inline; optional PNG/CSV exports require an explicit `OUTPUT_DIR`.
-Jupyter may save displayed results inside the notebook. Before sharing a new run, clear any outputs or paths
-you do not intend to publish. No raw data exports are implemented in these notebooks.
+**PCA90:** the number of principal components explaining at least 90% of variance, with the retained alignment dimension shown separately. Tracked appearances of the same MU occupy one feature column before PCA; missing task memberships are zero-filled.
+
+**Alignment:** 2D and 3D trajectory comparisons, canonical correlations for every fitted mode, and their top-three mean. Colors identify tasks; solid and dashed lines distinguish source and target.
+
+**Controls:** observed versus temporal-block-shuffled activity, and correct versus incorrect task correspondence. The task-correspondence control keeps the pooled PCA spaces fixed, fits each global alignment on matched-length sample sets across all three tasks, and projects the complete trajectories while retaining true task colors.
+
+Results appear inline. To export figures and summary tables, set `SAVE_OUTPUTS = True` and specify `OUTPUT_DIR`.
